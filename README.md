@@ -1,3 +1,5 @@
+<a href="https://pypi.org/project/turboquant-ml/"><img alt="PyPI" src="https://img.shields.io/pypi/v/turboquant-ml"></a>
+
 <h1 align="center">TurboQuant</h1>
 
 <p align="center">
