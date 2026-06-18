@@ -68,7 +68,8 @@ def quantize_onnx_dynamic(
 
 def _require_ort_quantization() -> Any:
     try:
-        from onnxruntime import quantization as ort_q  # noqa: PLC0415
+        from onnxruntime import quantization as ort_q
+
         return ort_q
     except ImportError as e:  # pragma: no cover
         raise ImportError(

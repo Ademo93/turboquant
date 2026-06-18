@@ -16,8 +16,8 @@ from typing import Any, Literal
 import torch
 from torch import nn
 
-from turboquant.quantization import bnb, dtype_cast, gptq_int, int8_dynamic, int8_static
 from turboquant.quantization import awq_int as awq_mod
+from turboquant.quantization import bnb, dtype_cast, gptq_int, int8_dynamic, int8_static
 
 Method = Literal[
     "fp16",

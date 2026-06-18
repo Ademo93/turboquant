@@ -57,6 +57,9 @@ benchmarks/results/*.png
 !benchmarks/results/gpt2.json
 !benchmarks/results/gpt2.png
 
+# MkDocs build output
+site/
+
 # Logs
 *.log
 logs/

@@ -84,8 +84,6 @@ def _make_qconfig(observer: str, per_channel: bool) -> Any:
             dtype=torch.qint8, qscheme=torch.per_channel_symmetric
         )
     else:
-        weight = MinMaxObserver.with_args(
-            dtype=torch.qint8, qscheme=torch.per_tensor_symmetric
-        )
+        weight = MinMaxObserver.with_args(dtype=torch.qint8, qscheme=torch.per_tensor_symmetric)
 
     return QConfig(activation=act, weight=weight)

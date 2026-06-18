@@ -46,7 +46,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-onnx = ["onnx>=1.16", "onnxruntime>=1.18", "onnxslim>=0.1"]
+onnx = ["onnx>=1.16", "onnxruntime>=1.18", "onnxslim>=0.1", "onnxscript>=0.1"]
 gptq = ["auto-gptq>=0.7.1", "optimum>=1.20"]
 awq = ["autoawq>=0.2.5"]
 bnb = ["bitsandbytes>=0.43"]

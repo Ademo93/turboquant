@@ -7,6 +7,8 @@ sparsity yields no latency win on dense GPU kernels but is a strong
 
 from __future__ import annotations
 
+import contextlib
+
 import torch
 import torch.nn.utils.prune as prune_utils
 from torch import nn
@@ -37,9 +39,7 @@ def prune_magnitude(
     if not 0.0 <= sparsity < 1.0:
         raise ValueError("sparsity must be in [0, 1)")
 
-    params_to_prune = [
-        (m, "weight") for m in model.modules() if isinstance(m, target_layers)
-    ]
+    params_to_prune = [(m, "weight") for m in model.modules() if isinstance(m, target_layers)]
     if not params_to_prune:
         return model
 
@@ -57,10 +57,9 @@ def prune_magnitude(
 
     if make_permanent:
         for module, name in params_to_prune:
-            try:
+            # remove() raises ValueError if the parametrization is absent
+            with contextlib.suppress(ValueError):
                 prune_utils.remove(module, name)
-            except ValueError:
-                pass  # nothing to remove
 
     return model
 

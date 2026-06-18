@@ -21,7 +21,8 @@ def build_tensorrt_engine(
     workspace_gb: float = 4.0,
     calibrator: Any | None = None,
     max_batch_size: int = 1,
-    profile_shapes: dict[str, tuple[tuple[int, ...], tuple[int, ...], tuple[int, ...]]] | None = None,
+    profile_shapes: dict[str, tuple[tuple[int, ...], tuple[int, ...], tuple[int, ...]]]
+    | None = None,
 ) -> Path:
     """Build a TensorRT engine from an ONNX file.
 
@@ -107,6 +108,7 @@ class NumpyCalibrator:
                 except StopIteration:
                     return None
                 import pycuda.driver as cuda
+
                 if self_._device_buffer is None:
                     self_._device_buffer = cuda.mem_alloc(batch.nbytes)
                 cuda.memcpy_htod(self_._device_buffer, batch.tobytes())

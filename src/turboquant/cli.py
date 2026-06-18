@@ -10,9 +10,10 @@ Subcommands:
 
 from __future__ import annotations
 
+import contextlib
 import json
 from pathlib import Path
-from typing import Annotated, Optional
+from typing import Annotated
 
 import typer
 from rich.console import Console
@@ -36,7 +37,9 @@ def quantize(
     group_size: Annotated[int, typer.Option(help="GPTQ/AWQ group size")] = 128,
     calib_dataset: Annotated[str, typer.Option(help="Calibration dataset")] = "wikitext",
     calib_samples: Annotated[int, typer.Option()] = 128,
-    out: Annotated[Path, typer.Option("--out", "-o", help="Output directory")] = Path("outputs/quantized"),
+    out: Annotated[Path, typer.Option("--out", "-o", help="Output directory")] = Path(
+        "outputs/quantized"
+    ),
 ) -> None:
     """Quantize a model and save the result."""
     from transformers import AutoModelForCausalLM, AutoTokenizer
@@ -44,7 +47,9 @@ def quantize(
     from turboquant import quantize as q
     from turboquant.benchmark import model_size_bytes
 
-    console.print(Panel.fit(f"[bold cyan]turboquant quantize[/]  [dim]{model_id}[/]  →  [yellow]{method}[/]"))
+    console.print(
+        Panel.fit(f"[bold cyan]turboquant quantize[/]  [dim]{model_id}[/]  →  [yellow]{method}[/]")
+    )
 
     if method in {"gptq", "awq"}:
         qmodel = q(
@@ -80,30 +85,33 @@ def prune(
     from turboquant import prune as p
     from turboquant.pruning import sparsity as measure
 
-    console.print(Panel.fit(f"[bold cyan]turboquant prune[/]  [dim]{model_id}[/]  →  [yellow]{strategy} @ {sparsity:.0%}[/]"))
+    console.print(
+        Panel.fit(
+            f"[bold cyan]turboquant prune[/]  [dim]{model_id}[/]  →  [yellow]{strategy} @ {sparsity:.0%}[/]"
+        )
+    )
 
     model = AutoModel.from_pretrained(model_id)
     pruned = p(model, strategy=strategy, sparsity=sparsity)
     out.mkdir(parents=True, exist_ok=True)
     pruned.save_pretrained(out.as_posix())
-    try:
+    with contextlib.suppress(Exception):
         AutoTokenizer.from_pretrained(model_id).save_pretrained(out.as_posix())
-    except Exception:
-        pass
 
-    console.print(f"[green]✓[/] Final sparsity: [yellow]{measure(pruned):.1%}[/]  →  [bold]{out}[/]")
+    console.print(
+        f"[green]✓[/] Final sparsity: [yellow]{measure(pruned):.1%}[/]  →  [bold]{out}[/]"
+    )
 
 
 @app.command()
 def export(
     model_id: Annotated[str, typer.Argument(help="Local path or HF id")],
     fmt: Annotated[str, typer.Option("--format", help="onnx|tensorrt")] = "onnx",
-    quant: Annotated[Optional[str], typer.Option(help="onnx-int8-dynamic")] = None,
+    quant: Annotated[str | None, typer.Option(help="onnx-int8-dynamic")] = None,
     opset: Annotated[int, typer.Option()] = 17,
     out: Annotated[Path, typer.Option("--out", "-o")] = Path("outputs/exported"),
 ) -> None:
     """Export to ONNX (optionally with INT8) or TensorRT."""
-    import torch
     from transformers import AutoModel, AutoTokenizer
 
     from turboquant.export import export_onnx, quantize_onnx_dynamic
@@ -122,7 +130,9 @@ def export(
         else:
             console.print(f"[green]✓[/] ONNX → [bold]{onnx_path}[/]")
     elif fmt == "tensorrt":
-        console.print("[yellow]TensorRT export expects an existing ONNX file. Use `tq export --format onnx` first.[/]")
+        console.print(
+            "[yellow]TensorRT export expects an existing ONNX file. Use `tq export --format onnx` first.[/]"
+        )
         raise typer.Exit(1)
     else:
         console.print(f"[red]Unknown format '{fmt}'[/]")
@@ -132,10 +142,12 @@ def export(
 @app.command()
 def bench(
     model_id: Annotated[str, typer.Argument()],
-    methods: Annotated[str, typer.Option(help="Comma-separated list of methods to compare against the baseline")] = "fp16,int8-dynamic",
+    methods: Annotated[
+        str, typer.Option(help="Comma-separated list of methods to compare against the baseline")
+    ] = "fp16,int8-dynamic",
     prompt: Annotated[str, typer.Option()] = "Explain quantization in one sentence.",
     iters: Annotated[int, typer.Option()] = 20,
-    report: Annotated[Optional[Path], typer.Option(help="Write JSON report here")] = None,
+    report: Annotated[Path | None, typer.Option(help="Write JSON report here")] = None,
     plot: Annotated[bool, typer.Option(help="Save a matplotlib bar chart")] = False,
 ) -> None:
     """Benchmark a baseline model against one or more quantization methods."""
@@ -169,12 +181,22 @@ def bench(
         all_runs.extend(rep.runs[1:])  # avoid duplicating the baseline
 
     # Show baseline first, then candidates.
-    base_rep = compare(base, base, tokenizer=tok, prompts=[prompt], metrics=("latency", "memory", "size"), iters=iters, names=("fp16-baseline", "fp16-baseline"))
+    base_rep = compare(
+        base,
+        base,
+        tokenizer=tok,
+        prompts=[prompt],
+        metrics=("latency", "memory", "size"),
+        iters=iters,
+        names=("fp16-baseline", "fp16-baseline"),
+    )
     table = Table(title="Benchmark results")
     for col in ("name", "size_mb", "latency_ms", "throughput", "peak_gpu_mb"):
         table.add_column(col)
     for r in [base_rep.runs[0], *all_runs]:
-        table.add_row(r.name, str(r.size_mb), str(r.latency_ms), str(r.throughput), str(r.peak_gpu_mb))
+        table.add_row(
+            r.name, str(r.size_mb), str(r.latency_ms), str(r.throughput), str(r.peak_gpu_mb)
+        )
     console.print(table)
 
     if report is not None:

@@ -39,9 +39,7 @@ class BenchReport:
         widths = [max(len(c), *(len(r[i]) for r in rows)) for i, c in enumerate(cols)]
         sep = "+".join("-" * (w + 2) for w in widths)
         header = "|".join(f" {c:<{w}} " for c, w in zip(cols, widths, strict=True))
-        body = "\n".join(
-            "|".join(f" {r[i]:<{w}} " for i, w in enumerate(widths)) for r in rows
-        )
+        body = "\n".join("|".join(f" {r[i]:<{w}} " for i, w in enumerate(widths)) for r in rows)
         return f"{sep}\n{header}\n{sep}\n{body}\n{sep}"
 
     def save(self, path: str | Path) -> None:
@@ -79,9 +77,13 @@ def compare(
             inp = sample_input.to(device) if sample_input is not None else None
             if inp is None and tokenizer is not None and prompts:
                 ids = tokenizer(prompts[0], return_tensors="pt").input_ids.to(device)
-                fn = lambda: model.generate(ids, max_new_tokens=32, do_sample=False)  # noqa: E731
+
+                def fn(m=model, x=ids):
+                    return m.generate(x, max_new_tokens=32, do_sample=False)
             elif inp is not None:
-                fn = lambda i=inp: model(i)  # noqa: E731
+
+                def fn(m=model, x=inp):
+                    return m(x)
             else:
                 raise ValueError("Need either `sample_input` or `(tokenizer, prompts)`")
 

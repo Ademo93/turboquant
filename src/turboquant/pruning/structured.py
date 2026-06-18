@@ -9,7 +9,7 @@ sufficient for benchmarking and for export through ONNX shape inference.
 
 from __future__ import annotations
 
-from collections.abc import Callable
+import contextlib
 
 import torch
 import torch.nn.utils.prune as prune_utils
@@ -46,12 +46,9 @@ def prune_random_channel(
     """Useful baseline: structured sparsity with random channel selection."""
     for module in model.modules():
         if isinstance(module, target_layers):
-            dim = 0 if isinstance(module, nn.Conv2d) else 0
-            prune_utils.random_structured(module, name="weight", amount=sparsity, dim=dim)
-            try:
+            prune_utils.random_structured(module, name="weight", amount=sparsity, dim=0)
+            with contextlib.suppress(ValueError):
                 prune_utils.remove(module, "weight")
-            except ValueError:
-                pass
     return model
 
 
@@ -66,14 +63,10 @@ def _structured(
         raise ValueError("sparsity must be in [0, 1)")
     for module in model.modules():
         if isinstance(module, target_layers):
-            dim = 0  # output channels / output features
-            prune_utils.ln_structured(
-                module, name="weight", amount=sparsity, n=n, dim=dim
-            )
-            try:
+            # dim=0 = output channels / output features
+            prune_utils.ln_structured(module, name="weight", amount=sparsity, n=n, dim=0)
+            with contextlib.suppress(ValueError):
                 prune_utils.remove(module, "weight")
-            except ValueError:
-                pass
     return model
 
 
@@ -89,6 +82,7 @@ def estimate_flops_saved(
     Compares "logical" weight FLOPs against the same model with zero-channel
     rows removed. Useful as a sanity check after structured pruning.
     """
+
     def _conv_flops(m: nn.Conv2d, x: torch.Tensor) -> int:
         oh = x.shape[-2] // m.stride[0]
         ow = x.shape[-1] // m.stride[1]
@@ -100,7 +94,6 @@ def estimate_flops_saved(
         return int(nonzero_out * m.in_features)
 
     flops = 0
-    hooks: list[Callable] = []
 
     def hook_factory(name: str, mod: nn.Module):
         def hook(_, inputs, _output):

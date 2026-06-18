@@ -13,7 +13,9 @@ from turboquant.benchmark import (
 from turboquant.benchmark.compare import compare
 
 
-def test_measure_latency_returns_reasonable_stats(tiny_mlp: nn.Module, mlp_input: torch.Tensor) -> None:
+def test_measure_latency_returns_reasonable_stats(
+    tiny_mlp: nn.Module, mlp_input: torch.Tensor
+) -> None:
     res = measure_latency(lambda: tiny_mlp(mlp_input), warmup=2, iters=5, device="cpu")
     assert res.n_iters == 5
     assert res.mean_ms > 0
