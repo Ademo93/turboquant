@@ -6,7 +6,8 @@
 </p>
 
 <p align="center">
-  <a href="#"><img alt="Python" src="https://img.shields.io/badge/python-3.10%2B-blue"></a>
+  <a href="https://pypi.org/project/turboquant-ml/"><img alt="PyPI" src="https://img.shields.io/pypi/v/turboquant-ml"></a>
+  <a href="https://pypi.org/project/turboquant-ml/"><img alt="Python" src="https://img.shields.io/badge/python-3.10%2B-blue"></a>
   <a href="#"><img alt="PyTorch" src="https://img.shields.io/badge/pytorch-2.2%2B-ee4c2c"></a>
   <a href="#"><img alt="License" src="https://img.shields.io/badge/license-MIT-green"></a>
   <a href="https://github.com/Ademo93/turboquant/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Ademo93/turboquant/actions/workflows/ci.yml/badge.svg"></a>
