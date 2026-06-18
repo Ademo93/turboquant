@@ -1,5 +1,3 @@
-<a href="https://pypi.org/project/turboquant-ml/"><img alt="PyPI" src="https://img.shields.io/pypi/v/turboquant-ml"></a>
-
 <h1 align="center">TurboQuant</h1>
 
 <p align="center">
@@ -14,6 +12,7 @@
   <a href="https://github.com/Ademo93/turboquant/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/Ademo93/turboquant/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://Ademo93.github.io/turboquant/"><img alt="Docs" src="https://img.shields.io/badge/docs-mkdocs--material-blue"></a>
   <a href="#"><img alt="Status" src="https://img.shields.io/badge/status-beta-orange"></a>
+  <a href="https://pypi.org/project/turboquant-ml/"><img alt="PyPI" src="https://img.shields.io/pypi/v/turboquant-ml"></a>
 </p>
 
 ---
