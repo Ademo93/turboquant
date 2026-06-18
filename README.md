@@ -124,32 +124,46 @@ tq bench meta-llama/Llama-3.2-1B --methods fp16,int8-dynamic,bnb-nf4 \
 
 ## Reference benchmarks
 
-> Numbers below are illustrative — re-run `tq bench` on your hardware for ground truth.
+### SmolLM2-135M on CPU (real measured numbers)
 
-### Llama-3.2-1B on a single RTX 4070
+`python benchmarks/scripts/sweep_cpu.py --model-id HuggingFaceTB/SmolLM2-135M --methods fp32,fp16,bf16,int8-dynamic`
 
-| Method | Size | VRAM | Latency (tok/s) | Perplexity (wikitext) |
-|---|---:|---:|---:|---:|
-| FP16 baseline | 2.5 GB | 3.1 GB | 92 | 9.18 |
-| INT8 (bnb) | 1.3 GB | 1.8 GB | 88 | 9.21 |
-| GPTQ INT4 g128 | 0.9 GB | 1.4 GB | 121 | 9.37 |
-| AWQ INT4 | 0.9 GB | 1.4 GB | 134 | 9.32 |
-| NF4 (bnb) | 0.8 GB | 1.3 GB | 76 | 9.41 |
-
-### ResNet-50 on ImageNet-val
-
-| Method | Size | Top-1 | CPU latency (ms) |
+| Method | Size (MB) | Forward latency (ms) | Generation throughput (tok/s) |
 |---|---:|---:|---:|
-| FP32 baseline | 98 MB | 76.13% | 38.4 |
-| FP16 | 49 MB | 76.10% | — |
-| INT8 PTQ static | 25 MB | 75.62% | 11.7 |
-| L1 channel-prune 30% + INT8 | 17 MB | 74.81% | 8.9 |
+| FP32 (baseline) | 513.2 | 31.3 | 32.6 |
+| FP16 | 256.7 | 57.2 | 47.5 |
+| BF16 | 256.7 | 55.4 | **48.9** |
+| INT8 dynamic | **236.6** | **30.7** | 30.0 |
 
-Run on your machine:
+Read this carefully — the result is realistic, not flattering:
+
+- **FP16/BF16 cut size in half**, and *generation* throughput goes **up ~50%**
+  (smaller KV cache wins), but the per-step forward pass is **2× slower**
+  because consumer CPUs have no fast FP16 matmul kernel. On a Tensor-Core GPU
+  these numbers flip.
+- **INT8 dynamic is the smallest** (≈54 % off) and matches FP32 forward
+  latency, but generation throughput is similar to FP32 here — the small
+  hidden size of a 135 M model limits how much INT8 GEMM kernels can help.
+- The right baseline matters: comparing INT8 to a poorly-quantizable
+  reference (e.g. GPT-2, which uses `transformers.Conv1D` instead of
+  `nn.Linear`) makes INT8 look bad. Always check what your method actually
+  rewrites — `tq methods` plus `print(model)` will tell you.
+
+![SmolLM2 sweep](benchmarks/results/smollm2_135m.png)
+
+### Reproduce
 
 ```bash
-tq bench meta-llama/Llama-3.2-1B --methods fp16,gptq,awq,bnb-nf4 --plot
+pip install -e ".[viz]" truststore
+python benchmarks/scripts/sweep_cpu.py \
+    --model-id HuggingFaceTB/SmolLM2-135M \
+    --methods fp32,fp16,bf16,int8-dynamic \
+    --out benchmarks/results/smollm2_135m.json \
+    --plot benchmarks/results/smollm2_135m.png
 ```
+
+GPU sweeps (Llama-class models with GPTQ / AWQ / NF4) will land here once a CUDA
+runner is added to CI — contributions welcome.
 
 ## Architecture
 

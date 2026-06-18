@@ -1,0 +1,48 @@
+{
+  "model_id": "HuggingFaceTB/SmolLM2-135M",
+  "prompt": "In one sentence, what is quantization?",
+  "device": "cpu",
+  "torch": "2.12.1+cpu",
+  "runs": [
+    {
+      "method": "fp32",
+      "size_mb": 513.238,
+      "fwd_latency_median_ms": 31.261,
+      "fwd_latency_p95_ms": 34.34,
+      "gen_total_ms": 735.94,
+      "gen_new_tokens": 24,
+      "gen_tok_per_s": 32.61,
+      "wall_s": 53.44
+    },
+    {
+      "method": "fp16",
+      "size_mb": 256.671,
+      "fwd_latency_median_ms": 57.218,
+      "fwd_latency_p95_ms": 62.146,
+      "gen_total_ms": 505.03,
+      "gen_new_tokens": 24,
+      "gen_tok_per_s": 47.52,
+      "wall_s": 2.16
+    },
+    {
+      "method": "bf16",
+      "size_mb": 256.671,
+      "fwd_latency_median_ms": 55.44,
+      "fwd_latency_p95_ms": 62.501,
+      "gen_total_ms": 491.01,
+      "gen_new_tokens": 24,
+      "gen_tok_per_s": 48.88,
+      "wall_s": 2.25
+    },
+    {
+      "method": "int8-dynamic",
+      "size_mb": 236.645,
+      "fwd_latency_median_ms": 30.683,
+      "fwd_latency_p95_ms": 32.979,
+      "gen_total_ms": 800.2,
+      "gen_new_tokens": 24,
+      "gen_tok_per_s": 29.99,
+      "wall_s": 3.71
+    }
+  ]
+}

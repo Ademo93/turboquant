@@ -1,0 +1,48 @@
+{
+  "model_id": "gpt2",
+  "prompt": "In one sentence, what is quantization?",
+  "device": "cpu",
+  "torch": "2.12.1+cpu",
+  "runs": [
+    {
+      "method": "fp32",
+      "size_mb": 474.752,
+      "fwd_latency_median_ms": 29.31,
+      "fwd_latency_p95_ms": 30.668,
+      "gen_total_ms": 489.77,
+      "gen_new_tokens": 24,
+      "gen_tok_per_s": 49.0,
+      "wall_s": 2.02
+    },
+    {
+      "method": "fp16",
+      "size_mb": 237.402,
+      "fwd_latency_median_ms": 1618.176,
+      "fwd_latency_p95_ms": 1657.448,
+      "gen_total_ms": 6207.73,
+      "gen_new_tokens": 24,
+      "gen_tok_per_s": 3.87,
+      "wall_s": 23.54
+    },
+    {
+      "method": "bf16",
+      "size_mb": 237.402,
+      "fwd_latency_median_ms": 1590.581,
+      "fwd_latency_p95_ms": 1600.154,
+      "gen_total_ms": 6139.26,
+      "gen_new_tokens": 24,
+      "gen_tok_per_s": 3.91,
+      "wall_s": 22.96
+    },
+    {
+      "method": "int8-dynamic",
+      "size_mb": 511.562,
+      "fwd_latency_median_ms": 26.075,
+      "fwd_latency_p95_ms": 28.671,
+      "gen_total_ms": 410.68,
+      "gen_new_tokens": 24,
+      "gen_tok_per_s": 58.44,
+      "wall_s": 2.43
+    }
+  ]
+}
