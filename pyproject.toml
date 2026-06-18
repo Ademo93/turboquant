@@ -3,9 +3,9 @@ requires = ["hatchling>=1.18"]
 build-backend = "hatchling.build"
 
 [project]
-name = "turboquant"
+name = "turboquant-ml"
 version = "0.1.0"
-description = "Model quantization and optimization toolkit for edge and resource-constrained deployment."
+description = "TurboQuant — model quantization and optimization toolkit for edge and resource-constrained deployment."
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
@@ -60,7 +60,7 @@ dev = [
     "pre-commit>=3.7",
 ]
 all = [
-    "turboquant[onnx,gptq,awq,bnb,eval,viz]",
+    "turboquant-ml[onnx,gptq,awq,bnb,eval,viz]",
 ]
 
 [project.scripts]

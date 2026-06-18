@@ -24,11 +24,13 @@ It is built around three principles:
 
 ## Install
 
+The PyPI distribution is `turboquant-ml`; the Python import is `turboquant`.
+
 ```bash
-pip install turboquant                       # core
-pip install "turboquant[onnx]"               # + ONNX export
-pip install "turboquant[gptq,awq,bnb,eval]"  # full LLM compression stack
-pip install "turboquant[all]"                # everything
+pip install turboquant-ml                       # core
+pip install "turboquant-ml[onnx]"               # + ONNX export
+pip install "turboquant-ml[gptq,awq,bnb,eval]"  # full LLM compression stack
+pip install "turboquant-ml[all]"                # everything
 ```
 
 ## 60-second tour

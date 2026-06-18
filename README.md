@@ -39,18 +39,27 @@ It is built around three principles:
 
 ## Installation
 
+The PyPI package is named **`turboquant-ml`** (the unsuffixed `turboquant`
+name was taken by an unrelated project). The Python import and CLI are still
+just `turboquant` / `tq`:
+
 ```bash
 # Core install
-pip install turboquant
+pip install turboquant-ml
 
 # With ONNX export
-pip install "turboquant[onnx]"
+pip install "turboquant-ml[onnx]"
 
 # Full LLM compression stack (GPTQ + AWQ + bitsandbytes)
-pip install "turboquant[gptq,awq,bnb,eval]"
+pip install "turboquant-ml[gptq,awq,bnb,eval]"
 
 # Everything
-pip install "turboquant[all]"
+pip install "turboquant-ml[all]"
+```
+
+```python
+import turboquant                  # import name unchanged
+from turboquant import quantize    # same API
 ```
 
 > **Note** — `bitsandbytes`, `auto-gptq`, `autoawq` and `tensorrt` are heavy native dependencies. They are deliberately optional; TurboQuant degrades gracefully when they are missing.
