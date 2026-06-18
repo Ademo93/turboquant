@@ -6,7 +6,7 @@ to [Semantic Versioning](https://semver.org).
 
 ## [Unreleased]
 
-## [0.1.0] — 2026-06-18
+## [0.1.0] — 2026-06-18 — first release
 
 ### Added
 - Unified `quantize(model, method=...)` dispatcher with FP16/BF16, INT8 dynamic
