@@ -19,6 +19,7 @@ from pathlib import Path
 
 try:
     import truststore  # Use OS cert store on Windows / corporate networks.
+
     truststore.inject_into_ssl()
 except ImportError:
     pass

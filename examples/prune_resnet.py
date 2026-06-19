@@ -20,11 +20,13 @@ from turboquant.pruning import sparsity as measure_sparsity
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--sparsity", type=float, default=0.30)
-    parser.add_argument("--strategy", default="l1-channel", choices=["l1-channel", "l2-channel", "magnitude"])
+    parser.add_argument(
+        "--strategy", default="l1-channel", choices=["l1-channel", "l2-channel", "magnitude"]
+    )
     parser.add_argument("--out", type=Path, default=Path("outputs/resnet50_pruned"))
     args = parser.parse_args()
 
-    print(f"Loading ResNet-50 ImageNet weights ...")
+    print("Loading ResNet-50 ImageNet weights ...")
     model = resnet50(weights=ResNet50_Weights.IMAGENET1K_V2).eval()
 
     print(f"Applying {args.strategy} pruning at {args.sparsity:.0%} sparsity ...")
